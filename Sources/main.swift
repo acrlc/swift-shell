@@ -1,5 +1,6 @@
 import Shell
-#if arch(wasm32) || os(Windows) || os(Linux)
+import Core
+#if os(Windows) || os(Linux)
 import enum Crypto.Insecure
 #else
 import enum CryptoKit.Insecure

@@ -25,21 +25,21 @@ func initialize() throws {
  // MARK: - Process script
  project.set()
 
- let package = try project.overwrite(at: "Package.swift")
- try package.write(manifest)
-
- let main = try project.overwrite(at: "Sources/main.swift")
- try main.write(codes)
-
- let tag = try project.overwrite(at: ".modified")
- try tag.write(modified.timeIntervalSinceReferenceDate.description)
-
- // MARK: - Build and run script
- let command = ["build"] + ["--product", binaryName]
-
- let defaults =
-  testable ? .empty : ["-c", "release"] + ["-Xcc", "-Ofast", "-Xswiftc", "-O"]
  do {
+  let package = try project.overwrite(at: "Package.swift")
+  try package.write(manifest)
+
+  let main = try project.overwrite(at: "Sources/main.swift")
+  try main.write(codes)
+
+  let tag = try project.overwrite(at: ".modified")
+  try tag.write(modified.timeIntervalSinceReferenceDate.description)
+
+  // MARK: - Build and run script
+  let command = ["build"] + ["--product", binaryName]
+
+  let defaults =
+   testable ? .empty : ["-c", "release"] + ["-Xcc", "-Ofast", "-Xswiftc", "-O"]
   try process(.swift, with: command + defaults)
 
   let outputArguments = command + defaults + ["--show-bin-path"]
@@ -56,19 +56,20 @@ func initialize() throws {
 
   try binary.move(to: project)
 
-  initial.set()
-
-  let moved = try project.file(at: executable)
-
-  // execute script with input file.swift removed
-  try exec(moved.path, with: arguments)
- } catch let error as POSIXError {
+ } catch let error as _POSIXError {
   // remove expired executable so it can be rebuilt
   if let binary = try? project.file(at: executable) { try binary.delete() }
-  exit(error)
- } catch {
-  throw error
+
+  exit(error.status)
  }
+ catch { exit(error) }
+
+ initial.set()
+
+ let moved = try project.file(at: executable)
+
+ // execute script with input file.swift removed
+ try exec(moved.path, with: arguments)
 }
 
 extension String {
