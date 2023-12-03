@@ -1,5 +1,5 @@
 #### Run code and execute tests, quickly and without opening a package or project
-### Build
+### Install
 using [swift-install](https://github.com/codeAcrylic/swift-install)
 ```sh
 cd swift-shell && swift install
@@ -64,12 +64,12 @@ Add URL dependency
 import Shell // @git/codeAcrylic/shell
 // @git or @github expands to https://github.com/codeAcrylic/shell
 ```
-URL dependnecy with branch specified
+URL dependency with branch specified
 ```swift
 import Shell // @git:main/codeAcrylic/shell
 // sets the branch to main, which is the default
 ```
-Add path dependnecy
+Add path dependency
 ```swift
 import AsyncAlgorithms // ~/path/to/apple/swift-async-algorithms
 import Other // $main/path/to/other/package
