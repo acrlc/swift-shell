@@ -25,7 +25,7 @@ for target in package.targets {
    .product(
     name: "Crypto",
     package: "swift-crypto",
-    condition: .when(platforms: [.wasi, .windows, .linux])
+    condition: .when(platforms: [.windows, .linux])
    )
   ]
   break
