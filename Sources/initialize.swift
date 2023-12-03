@@ -62,7 +62,7 @@ func initialize() throws {
 
   // execute script with input file.swift removed
   try exec(moved.path, with: arguments)
- } catch let error as ShellError {
+ } catch let error as POSIXError {
   // remove expired executable so it can be rebuilt
   if let binary = try? project.file(at: executable) { try binary.delete() }
   exit(error)
