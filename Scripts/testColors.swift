@@ -1,5 +1,5 @@
 #!/usr/bin/env swift-shell
-import Shell // @git/codeAcrylic/shell
+import Shell // @git/acrlc/shell
 
 // MARK: Prints out all 256 colors if supported by the terminal
 let range = 0 ..< 16 as Range<UInt8>

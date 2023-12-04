@@ -1,6 +1,6 @@
 #### Run code and execute tests, quickly and without opening a package or project
 ### Install
-using [swift-install](https://github.com/codeAcrylic/swift-install)
+using [swift-install](https://github.com/acrlc/swift-install)
 ```sh
 cd swift-shell && swift install
 ```
@@ -61,12 +61,12 @@ chmod +x hello.swift
 #### Import dependencies
 Add URL dependency
 ```swift
-import Shell // @git/codeAcrylic/shell
-// @git or @github expands to https://github.com/codeAcrylic/shell
+import Shell // @git/acrlc/shell
+// @git or @github expands to https://github.com/acrlc/shell
 ```
 URL dependency with branch specified
 ```swift
-import Shell // @git:main/codeAcrylic/shell
+import Shell // @git:main/acrlc/shell
 // sets the branch to main, which is the default
 ```
 Add path dependency

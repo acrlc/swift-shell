@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
  name: "swift-shell", platforms: [.macOS("13.3")],
  dependencies: [
-  .package(url: "https://github.com/codeAcrylic/shell.git", branch: "main")
+  .package(url: "https://github.com/acrlc/shell.git", branch: "main")
  ],
  targets: [
   .executableTarget(
