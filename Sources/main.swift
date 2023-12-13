@@ -5,7 +5,7 @@ import enum Crypto.Insecure
 #else
 import enum CryptoKit.Insecure
 #endif
-
+var silent: Bool = false
 var testable: Bool = false
 // FIXME: remove not working even when other flags are omitted
 /// Update all dependencies and rebuild using the current build folder
@@ -103,21 +103,24 @@ func parse() {
   }
 
   switch argument {
+  case "silent": silent = true
+  case "testable": testable = true
+  case "enable": enabled = enableFeatures()
   case "clean": clean = true
   case "remove": remove = true
-  case "testable": testable = true
   case "update": update = true
-  case "enable": enabled = enableFeatures()
   default:
    // FIXME: ensure arguments pass sanity test
    for char in argument {
     switch char {
+    case "s": silent = true
+    case "t": testable = true
+    case "e": enabled = enableFeatures()
     case "c": clean = true
     case "r": remove = true
-    case "t": testable = true
     case "u": update = true
-    case "e": enabled = enableFeatures()
-    default: exit(1, "unknown flag at character: \(char)")
+    default:
+     exit(1, "unknown option: \(argument)")
     }
    }
   }

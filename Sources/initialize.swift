@@ -40,10 +40,16 @@ func initialize() throws {
 
   let defaults =
    testable ? .empty : ["-c", "release"] + ["-Xcc", "-Ofast", "-Xswiftc", "-O"]
-  try process(.swift, with: command + defaults)
+  let arguments = command + defaults
 
-  let outputArguments = command + defaults + ["--show-bin-path"]
-  let binPath = try output(.swift, outputArguments)
+  if silent {
+   try output(.swift, with: arguments, silent: true)
+  } else {
+   try process(.swift, with: arguments)
+  }
+
+  let outputArguments = arguments + ["--show-bin-path"]
+  let binPath = try output(.swift, with: outputArguments)
 
   let binFolder = try Folder(path: binPath)
   guard let binary = try? binFolder.file(at: binaryName) else { return }
