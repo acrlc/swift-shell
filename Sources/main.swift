@@ -34,11 +34,7 @@ var developer: Folder {
 
 var cache: Folder {
  get throws {
-  guard let derivedData = try? developer.subfolder(at: "Xcode/DerivedData")
-  else {
-   return try developer.createSubfolderIfNeeded(at: ".swift.shell.cache")
-  }
-  return derivedData
+  try developer.createSubfolderIfNeeded(at: ".swift.shell.cache")
  }
 }
 

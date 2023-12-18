@@ -32,7 +32,7 @@ notes:
 	using combined flags -u and -c will remove the project from cache
 	create a symbolic link if you would like to use swift-sh or swift sh
 	
-cache: derived data folder or ~/library/developer/.swift.shell.cache
+cache: ~/library/developer/.swift.shell.cache
 ```
 
 #### Known limitations 
