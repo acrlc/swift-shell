@@ -43,7 +43,15 @@ func initialize() throws {
   let arguments = command + defaults
 
   if silent {
-   try output(.swift, with: arguments, silent: true)
+   // TODO: output errors, some don't carry because I'm not reading stderr
+   do {
+    try output(.swift, with: arguments)
+   } catch let error as ShellError {
+    print(error.outputData.asciiOutput())
+    throw _POSIXError.termination(error.terminationStatus)
+   } catch {
+    throw error
+   }
   } else {
    try process(.swift, with: arguments)
   }
