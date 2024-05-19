@@ -13,8 +13,10 @@ func initialize() throws {
    """
    \npackage.targets.first(where: { $0.name == "\(binaryName)" })!\
    .swiftSettings = [
-   \(enabled.map { "  .enableExperimentalFeature(\"\($0)\")" }
-    .joined(separator: .comma + .newline))
+   \(
+    enabled.map { "  .enableExperimentalFeature(\"\($0)\")" }
+     .joined(separator: .comma + .newline)
+   )
    ]
    """
   )
@@ -87,7 +89,8 @@ func initialize() throws {
 }
 
 extension String {
- @inlinable static func manifest(
+ @inlinable
+ static func manifest(
   with dependencies: [(product: String, package: String)],
   _ libraryName: String, _ binaryName: String
  ) -> Self {
@@ -110,8 +113,10 @@ extension String {
    .executableTarget(
       name: "\(binaryName)",
       dependencies: [
-   \(dependencies.map { "    " + $0.product }
-    .joined(separator: .comma + .newline))
+   \(
+    dependencies.map { "    " + $0.product }
+     .joined(separator: .comma + .newline)
+   )
       ]
      )
     ]
@@ -132,8 +137,10 @@ extension String {
    .executableTarget(
       name: "\(binaryName)",
       dependencies: [
-   \(dependencies.map { "    " + $0.product }
-    .joined(separator: .comma + .newline))
+   \(
+    dependencies.map { "    " + $0.product }
+     .joined(separator: .comma + .newline)
+   )
       ]
      )
     ]

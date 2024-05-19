@@ -1,5 +1,5 @@
-import Shell
 import Core
+import Shell
 #if os(Windows) || os(Linux)
 import enum Crypto.Insecure
 #else
@@ -65,13 +65,14 @@ try check(project, file, binaryName, executable)
 
 let modified = file.modificationDate ?? .now
 
-if let project,
-   project.containsFile(at: "Package.swift"),
-   project.containsFile(at: executable),
-   let interval =
-   try? TimeInterval(project.file(at: ".modified").readAsString()),
-   // check modification interval
-   modified == Date(timeIntervalSinceReferenceDate: interval) {
+if
+ let project,
+ project.containsFile(at: "Package.swift"),
+ project.containsFile(at: executable),
+ let interval =
+ try? TimeInterval(project.file(at: ".modified").readAsString()),
+ // check modification interval
+ modified == Date(timeIntervalSinceReferenceDate: interval) {
  do {
   let path = project.path + executable
   try exec(path, with: arguments)
@@ -142,9 +143,11 @@ func check(
   var deleted = false
   // TODO: remove specific build folder
   if let folder = try? project.subfolder(named: ".build") {
-   guard let targets = folder.subfolders.recursive.map(
-    where: { !$0.isSymbolicLink && $0.name == (testable ? "debug" : "release") }
-   )
+   guard
+    let targets = folder.subfolders.recursive.map(
+     where: { !$0.isSymbolicLink && $0.name == (testable ? "debug" : "release")
+     }
+    )
    else { return }
    for folder in targets.uniqued(on: \.path) {
     do {

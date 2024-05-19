@@ -3,9 +3,10 @@ import Shell
 
 extension File {
  // MARK: - Dependencies
- func parse(testing: Bool) throws -> (String, [(product: String, package: String)]) {
+ func parse(testing: Bool) throws
+  -> (String, [(product: String, package: String)]) {
   // switch to script root because there could be path based dependencies
-  self.parent.unsafelyUnwrapped.set()
+  parent.unsafelyUnwrapped.set()
 
   let codes = try readAsString()
   // trim leading whitespace and remove shebang
@@ -34,10 +35,11 @@ extension File {
    guard !line.isEmpty else { continue }
 
    var commentIndices: Range<Substring.SubSequence.Index>? {
-    if let first = line.firstIndex(of: "/"),
-       let nextIndex =
-       line.index(first, offsetBy: 1, limitedBy: line.endIndex),
-       line[nextIndex] == "/" {
+    if
+     let first = line.firstIndex(of: "/"),
+     let nextIndex =
+     line.index(first, offsetBy: 1, limitedBy: line.endIndex),
+     line[nextIndex] == "/" {
      return first ..< nextIndex
     }
     return nil
@@ -61,8 +63,9 @@ extension File {
 
      let packageName = folder.name
      return (
-      packageName == name ? "\"\(name)\"" :
-       ".product(name: \"\(name)\", package: \"\(packageName)\")",
+      packageName == name
+       ? "\"\(name)\""
+       : ".product(name: \"\(name)\", package: \"\(packageName)\")",
       ".package(path: \"\(folder.path)\")"
      )
     }
@@ -99,8 +102,9 @@ extension File {
 
      let packageName = url.lastPathComponent
      return (
-      packageName == name ? "\"\(name)\"" :
-       ".product(name: \"\(name)\", package: \"\(packageName)\")",
+      packageName == name
+       ? "\"\(name)\""
+       : ".product(name: \"\(name)\", package: \"\(packageName)\")",
       ".package(url: \"\(urlString)\", branch: \"\(branch ?? "main")\")"
      )
     }
@@ -165,8 +169,10 @@ extension PathRepresentable {
    throw CocoaError.error(.fileReadUnknownStringEncoding)
   }
 
-  // “Removing an initial component of “/private/var/automount”, “/var/automount”,
-  // or “/private” from the path, if the result still indicates an existing file or
+  // “Removing an initial component of “/private/var/automount”,
+  // “/var/automount”,
+  // or “/private” from the path, if the result still indicates an existing file
+  // or
   // directory (checked by consulting the file system).”
   // ^^ we do this to not conflict with the results that other Apple APIs give
   // which is necessary if we are to have equality checks work reliably
