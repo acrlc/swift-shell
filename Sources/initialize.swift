@@ -45,7 +45,7 @@ func initialize() throws {
   if silent {
    // TODO: output errors, some don't carry because I'm not reading stderr
    do {
-    try output(.swift, with: arguments)
+    try process(.swift, with: arguments)
    } catch let error as ShellError {
     print(error.outputData.asciiOutput())
     throw _POSIXError.termination(error.terminationStatus)
@@ -57,7 +57,7 @@ func initialize() throws {
   }
 
   let outputArguments = arguments + ["--show-bin-path"]
-  let binPath = try output(.swift, with: outputArguments)
+  let binPath = try processOutput(.swift, with: outputArguments)
 
   let binFolder = try Folder(path: binPath)
   guard let binary = try? binFolder.file(at: binaryName) else { return }
