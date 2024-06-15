@@ -2,7 +2,7 @@
 import Command // @git/acrlc/command
 import PathObserver // @git/acrlc/paths
 
-/// A single file observer, usefule for scripts
+/// A single file observer, useful for scripts
 ///
 /// # Current Limitations
 /// - macOS only
