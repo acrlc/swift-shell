@@ -54,7 +54,7 @@ struct Observe: AsyncCommand {
   let _arguments = arguments[1...].map { $0 }
   let arguments =
    _arguments.contains(where: { $0.contains("{}") }) ?
-   _arguments.map { $0.replacingOccurrences(of: "{}", with: input.name) } :
+   _arguments.map { $0.replacingOccurrences(of: "{}", with: input.path) } :
    _arguments
 
   func clearOutput() throws {
@@ -93,7 +93,7 @@ struct Observe: AsyncCommand {
      print(
       """
       \(">", color: status == 1 ? .red : .yellow) \
-      \(command) \(arguments.joined(separator: .space)) \
+      \(command)\(arguments.joined(separator: .space)) \
       ended with status \(status)
       """
      )
