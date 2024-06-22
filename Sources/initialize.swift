@@ -85,7 +85,7 @@ func initialize() throws {
  let moved = try project.file(at: executable)
 
  // execute script with input file.swift removed
- try exec(moved.path, with: arguments)
+ try execv(moved.path, arguments)
 }
 
 extension String {

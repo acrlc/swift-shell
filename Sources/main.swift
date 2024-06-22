@@ -75,7 +75,7 @@ if
  modified == Date(timeIntervalSinceReferenceDate: interval) {
  do {
   let path = project.path + executable
-  try exec(path, with: arguments)
+  try execv(path, arguments)
  }
  catch { throw error }
 }
