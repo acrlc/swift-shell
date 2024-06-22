@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
  name: "swift-shell", platforms: [.macOS("13.3")],
+ products: [.executable(name: "swift-shell", targets: ["swift-shell"])],
  dependencies: [
   .package(url: "https://github.com/acrlc/shell.git", branch: "main")
  ],
@@ -25,7 +26,7 @@ for target in package.targets {
    .product(
     name: "Crypto",
     package: "swift-crypto",
-    condition: .when(platforms: [.windows, .linux])
+    condition: .when(platforms: [.windows, .linux, .wasi])
    )
   ]
   break
