@@ -1,6 +1,6 @@
 import Core
 import Shell
-#if os(Windows) || os(Linux)
+#if os(Windows) || os(Linux) || os(WASI)
 import enum Crypto.Insecure
 #else
 import enum CryptoKit.Insecure
