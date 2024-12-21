@@ -16,6 +16,12 @@ var clean: Bool = false
 var remove: Bool = false
 /// Experimental features
 var enabled: [String] = .empty
+/// Compiler flags / options
+var flags: [String] = .empty
+/// Toolchain path
+var toolchain: String?
+var shouldPrint: Bool = false
+var shouldOpen: Bool = false
 /*
  considering an install or copy function
  static var install: Bool = false
@@ -74,12 +80,20 @@ if
  // check modification interval
  modified == Date(timeIntervalSinceReferenceDate: interval) {
  do {
+  if shouldOpen  {
+   try! project.file(at: "Package.swift").open()
+   exit(0)
+  }
+  
   let path = project.path + executable
+  
+  if shouldPrint {
+   print(path)
+  }
+
   try execv(path, arguments)
- }
- catch { throw error }
-}
-else { try initialize() }
+ } catch { throw error }
+} else { try initialize() }
 
 // MARK: - Functions
 func parse() {
@@ -89,7 +103,7 @@ func parse() {
   // so the first argument (which could be a filename) isn't removed
   let argument = arguments.removeFirst().drop(while: { $0 == "-" })
 
-  func enableFeatures() -> [String] {
+  func splitInput() -> [String] {
    guard arguments.count > 1 else { return .empty }
    return arguments
     .removeFirst()
@@ -102,20 +116,28 @@ func parse() {
   switch argument {
   case "silent": silent = true
   case "testable": testable = true
-  case "enable": enabled = enableFeatures()
+  case "enable": enabled = splitInput()
+  case "flags": flags = splitInput()
+  case "toolchain": toolchain = arguments.removeFirst()
   case "clean": clean = true
   case "remove": remove = true
   case "update": update = true
+  case "open": shouldOpen = true
+  case "print": shouldPrint = true
   default:
    // FIXME: ensure arguments pass sanity test
    for char in argument {
     switch char {
     case "s": silent = true
     case "t": testable = true
-    case "e": enabled = enableFeatures()
+    case "e": enabled = splitInput()
+    case "f": flags = splitInput()
+    case "v": toolchain = arguments.removeFirst()
     case "c": clean = true
     case "r": remove = true
     case "u": update = true
+    case "o": shouldOpen = true
+    case "p": shouldPrint = true
     default:
      exit(1, "unknown option: \(argument)")
     }
@@ -126,7 +148,7 @@ func parse() {
 
 func check(
  _ project: Folder?,
- _ file: File,
+ _: File,
  _ binaryName: String,
  _ executable: String
 ) throws {
@@ -154,8 +176,7 @@ func check(
      try folder.delete()
      print("removed \(folder.name) build folder from cache")
      deleted = true
-    }
-    catch { continue }
+    } catch { continue }
    }
   }
 
@@ -180,8 +201,7 @@ func check(
    try project.delete()
    print("removed \(binaryName) from cache")
    exit(0)
-  }
-  catch { exit(error) }
+  } catch { exit(error) }
  } else if update {
   guard let project else { return }
 

@@ -35,6 +35,11 @@ struct Observe: AsyncCommand {
  @Inputs
  var arguments: [String] = ["./{}"]
 
+ static func clearOutput() throws {
+  Shell.clearScrollback()
+  try process(command: "printf", [#"\e[3J"#])
+ }
+
  func main() async {
   guard let input else { exit(2, "input <file> required") }
   guard arguments.notEmpty else { exit(1, "missing input <command>") }
@@ -57,31 +62,32 @@ struct Observe: AsyncCommand {
    _arguments.map { $0.replacingOccurrences(of: "{}", with: input.path) } :
    _arguments
 
-  func clearOutput() throws {
-   try process(command: "clear")
-   try process(command: "printf", [#"\e[3J"#])
+  let completionMarker = "\(">", style: .dim)"
+
+  func callProcess() throws {
+   try process(command: command, arguments)
   }
 
-  func run(initial: Bool = false) async {
+  func repeatProcess() throws {
+   if clear {
+    try Self.clearOutput()
+   } else {
+    Shell.clearScrollback()
+    print(">>")
+   }
+   try callProcess()
+   print(completionMarker)
+  }
+
+  func observe(initial: Bool = false) async {
    do {
-    let completionMarker = "\(">", style: .dim)"
     if initial {
-     if clear { try clearOutput() }
-     try process(command: command, arguments)
+     if clear { try Self.clearOutput() }
+     try callProcess()
      print(completionMarker)
     }
 
-    try await observer { _, _, _ in
-     if clear { try clearOutput() }
-     else {
-      Shell.clearScrollback()
-      print(">>")
-     }
-
-     try process(command: command, arguments)
-     print(completionMarker)
-    }
-
+    try await observer { _, _, _ in try repeatProcess() }
    } catch {
     let status = error._code
     switch status {
@@ -99,10 +105,25 @@ struct Observe: AsyncCommand {
      )
     }
    }
-   await run()
+   await observe()
   }
 
+  func run(initial: Bool = false) async {
+   await observe(initial: true)
+   exit(2, "\nFile no longer exists")
+  }
+
+  Shell.onInterruption { signal in
+   try? Self.clearOutput()
+   signal == 2 ? exit(0) : exit(1)
+  }
+
+  Shell.handleInput { [weak observer] key in
+   guard let observer else { exit(1, "observation was lost!") }
+   guard key == .space else { return false }
+   await observer.cancel()
+   return true
+  }
   await run(initial: true)
-  exit(2, "\nFile no longer exists")
  }
 }
