@@ -57,7 +57,7 @@ parse()
 let input = arguments.removeFirst()
 let file = try File(path: input).withRealPath()
 
-let hashedPath = file.path.lowercased().hash(with: Insecure.MD5.self)
+let hashedPath = file.path.lowercased().hashString(with: Insecure.MD5.self)
 
 let scriptName = file.name
 let name = file.nameExcludingExtension
