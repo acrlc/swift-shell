@@ -56,10 +56,14 @@ func initialize() throws {
   
   let tag = try project.overwrite(at: ".modified")
   try tag.write(modified.timeIntervalSinceReferenceDate.description)
-  
-  if shouldOpen  {
-   `package`.open()
+
+  if shouldOpen {
+   #if os(macOS)
+   package.open()
    exit(0)
+   #else
+   exit(1, "unable to open package on this operating system")
+   #endif
   }
   
   // MARK: - Build and run script

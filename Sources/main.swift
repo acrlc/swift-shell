@@ -82,9 +82,13 @@ if
  // check modification interval
  modified == Date(timeIntervalSinceReferenceDate: interval) {
  do {
-  if shouldOpen  {
+  if shouldOpen {
+   #if os(macOS)
    try! project.file(at: "Package.swift").open()
    exit(0)
+   #else
+   exit(1, "unable to open package on this operating system")
+   #endif
   }
   
   let path = project.path + executable
