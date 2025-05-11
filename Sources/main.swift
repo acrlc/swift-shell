@@ -1,10 +1,12 @@
 import Core
 import Shell
-#if os(Windows) || os(Linux) || os(WASI)
-import enum Crypto.Insecure
-#else
+import Extensions
+#if canImport(CryptoKit)
 import enum CryptoKit.Insecure
+#else
+import enum Crypto.Insecure
 #endif
+
 var silent: Bool = false
 var testable: Bool = false
 // FIXME: remove not working even when other flags are omitted
