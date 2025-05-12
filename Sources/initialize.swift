@@ -180,9 +180,9 @@ extension String {
     dependencies.map { "    " + $0.product }
      .joined(separator: .comma + .newline)
    )
-      ]
-     ),
-     path: "."
+      ],
+      path: "."
+     )
     ]
    )
    """
