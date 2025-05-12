@@ -2,7 +2,8 @@
 import PackageDescription
 
 let package = Package(
- name: "swift-shell", platforms: [.macOS("13.3")],
+ name: "swift-shell",
+ platforms: [.macOS(.v12)],
  products: [.executable(name: "swift-shell", targets: ["swift-shell"])],
  dependencies: [
   .package(url: "https://github.com/acrlc/shell.git", branch: "main")
@@ -16,6 +17,7 @@ let package = Package(
  ]
 )
 
+#if os(Linux) || os(Windows)
 // add OpenCombine for framewords that depend on Combine functionality
 package.dependencies.append(
  .package(url: "https://github.com/apple/swift-crypto.git", from: "3.1.0")
@@ -32,3 +34,4 @@ for target in package.targets {
   break
  }
 }
+#endif

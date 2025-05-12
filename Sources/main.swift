@@ -1,6 +1,5 @@
 import Core
 import Shell
-import Extensions
 #if canImport(CryptoKit)
 import enum CryptoKit.Insecure
 #else
@@ -64,7 +63,9 @@ parse()
 let input = arguments.removeFirst()
 let file = try File(path: input).withRealPath()
 
-let hashedPath = file.path.lowercased().hashString(with: Insecure.MD5.self)
+let hashedPath = Insecure.MD5.hash(data: Data(file.path.lowercased().utf8))
+ .compactMap { String(format: "%02x", $0) }
+ .joined()
 
 let scriptName = file.name
 let name = file.nameExcludingExtension
