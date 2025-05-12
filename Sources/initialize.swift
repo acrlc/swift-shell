@@ -4,10 +4,10 @@ func initialize() throws {
  // the working directory, which changes after parsing the file
  // so it's stored here to be ran with the executable
  let initial = Folder.current
- 
+
  let (codes, dependencies) = try file.parse(testing: testable)
  var manifest: String = .manifest(with: dependencies, libraryName, binaryName)
- 
+
  if enabled.notEmpty || flags.notEmpty {
   manifest.append(
    """
@@ -17,7 +17,7 @@ func initialize() throws {
    """
   )
  }
- 
+
  if enabled.notEmpty {
   manifest.append(
    """
@@ -30,7 +30,7 @@ func initialize() throws {
    """
   )
  }
- 
+
  if flags.notEmpty {
   manifest.append(
    """
@@ -42,18 +42,18 @@ func initialize() throws {
    """
   )
  }
- 
+
  let project = try cache.createSubfolderIfNeeded(at: buildFolder)
- 
+
  // MARK: - Process script
  do {
   let package = try project.overwrite(at: "Package.swift")
   try package.write(manifest)
-  
+
   //  try project.overwrite(at: mainPath)
   try project.overwrite(at: "main.swift", contents: codes.data(using: .utf8)!)
-  //try process(.ln, with: "-fsn", file.path, project.path + mainPath)
-  
+  // try process(.ln, with: "-fsn", file.path, project.path + mainPath)
+
   let tag = try project.overwrite(at: ".modified")
   try tag.write(modified.timeIntervalSinceReferenceDate.description)
 
@@ -65,21 +65,21 @@ func initialize() throws {
    exit(1, "unable to open package on this operating system")
    #endif
   }
-  
+
   // MARK: - Build and run script
   let command = ["build"] + ["--product", binaryName]
-  
+
   let defaults =
-  testable ? .empty : ["-c", "release"] + ["-Xcc", "-Ofast", "-Xswiftc", "-O"]
+   testable ? .empty : ["-c", "release"] + ["-Xcc", "-Ofast", "-Xswiftc", "-O"]
   var arguments = command + defaults
-  
+
   if let toolchain {
    arguments += ["--toolchain", toolchain]
   }
-  
+
   // set current directory to use with swift
   project.set()
-  
+
   if silent {
    // TODO: output errors, some don't carry because I'm not reading stderr
    do {
@@ -93,31 +93,30 @@ func initialize() throws {
   } else {
    try process(.swift, with: arguments)
   }
-  
+
   let outputArguments = arguments + ["--show-bin-path"]
   let binPath = try processOutput(.swift, with: outputArguments)
-  
+
   let binFolder = try Folder(path: binPath)
   guard let binary = try? binFolder.file(at: binaryName) else { return }
-  
+
   try binary.rename(to: executable)
-  
+
   if let prev = try? project.file(at: executable) {
    try prev.delete()
   }
-  
+
   try binary.move(to: project)
-  
+
  } catch let error as _POSIXError {
   // remove expired executable so it can be rebuilt
   if let binary = try? project.file(at: executable) { try binary.delete() }
-  
+
   exit(error.status)
- }
- catch { exit(error) }
- 
+ } catch { exit(error) }
+
  let path = project.path + executable
- 
+
  initial.set()
  if shouldPrint {
   print(path)

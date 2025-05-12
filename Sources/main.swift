@@ -33,16 +33,21 @@ var shouldOpen: Bool = false
 var arguments = CommandLine.arguments[1...].map { $0 }
 
 let home: Folder = .home
-var developer: Folder {
+#if os(macOS)
+var cacheFolder: Folder {
  get throws {
   try (try? home.subfolder(at: "Developer")) ??
    home.subfolder(at: "Library/Developer")
  }
 }
+#else
+// TODO: determine the correct cache folder
+var cacheFolder: Folder { home }
+#endif
 
 var cache: Folder {
  get throws {
-  try developer.createSubfolderIfNeeded(at: ".swift.shell.cache")
+  try cacheFolder.createSubfolderIfNeeded(at: ".swift.shell.cache")
  }
 }
 
@@ -90,9 +95,9 @@ if
    exit(1, "unable to open package on this operating system")
    #endif
   }
-  
+
   let path = project.path + executable
-  
+
   if shouldPrint {
    print(path)
   }
