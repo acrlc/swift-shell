@@ -40,10 +40,16 @@ struct Observe: AsyncCommand {
   try process(command: "printf", [#"\e[3J"#])
  }
 
- func main() async {
+ func main() async throws {
   guard let input else { exit(2, "input <file> required") }
   guard arguments.notEmpty else { exit(1, "missing input <command>") }
-  if open { input.open() }
+  if open {
+   #if os(macOS)
+   input.open()
+   #else
+   try process(.open, with: input.path)
+   #endif
+  }
 
   let interval =
    updateInterval == nil ? nil : UInt64(updateInterval!.nanoseconds)
@@ -53,13 +59,14 @@ struct Observe: AsyncCommand {
   let _command = arguments[0]
   let command =
    _command.contains("{}") ?
-   _command.replacingOccurrences(of: "{}", with: input.name) :
+   _command
+   .replacingOccurrences(of: "{}", with: input.path(relativeTo: .current)) :
    _command
 
   let _arguments = arguments[1...].map { $0 }
   let arguments =
    _arguments.contains(where: { $0.contains("{}") }) ?
-   _arguments.map { $0.replacingOccurrences(of: "{}", with: input.path) } :
+   _arguments.map { $0.replacingOccurrences(of: "{}", with: input.path(relativeTo: .current)) } :
    _arguments
 
   let completionMarker = "\(">", style: .dim)"
