@@ -1,6 +1,6 @@
 #!/usr/bin/env swift-shell
-import Command // @git/acrlc/command
-import PathObserver // @git/acrlc/paths
+import Command // ../..//command
+import PathObserver // ../../paths
 
 /// A single file observer, useful for scripts
 ///
@@ -106,7 +106,7 @@ struct Observe: AsyncCommand {
      print(
       """
       \(">", color: status == 1 ? .red : .yellow) \
-      \(command)\(arguments.joined(separator: .space)) \
+      \(command) \(arguments.joined(separator: .space)) \
       ended with status \(status)
       """
      )
