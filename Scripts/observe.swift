@@ -40,6 +40,7 @@ struct Observe: AsyncCommand {
   try process(command: "printf", [#"\e[3J"#])
  }
 
+ let currentProcess = Process()
  func main() async throws {
   guard let input else { exit(2, "input <file> required") }
   guard arguments.notEmpty else { exit(1, "missing input <command>") }
@@ -113,6 +114,7 @@ struct Observe: AsyncCommand {
     }
    }
    await observe()
+   currentProcess.terminate()
   }
 
   func run(initial: Bool = false) async {
@@ -132,5 +134,9 @@ struct Observe: AsyncCommand {
    return true
   }
   await run(initial: true)
+ }
+ 
+ func onInterruption() async {
+  currentProcess.terminate()
  }
 }
